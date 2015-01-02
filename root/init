@@ -5,6 +5,7 @@ BB=/sbin/busybox
 
 set -x
 
+$BB mkdir -p /etc
 $BB mkdir -p /proc
 $BB mount -t proc proc /proc
 $BB mkdir -p /sys
@@ -22,17 +23,18 @@ $BB mount -o bind /data/linux /root
 $BB mkdir -p /root/data
 $BB mount -o bind /data /root/data
 
-$BB mkdir -p /root/mnt
-$BB mkdir -p /root/mnt/factory
-$BB mount -t ext4 -o ro /dev/mmcblk0p19 /root/mnt/factory
-
 $BB mkdir -p /root/system
 $BB mount -t ext4 -o ro /dev/mmcblk0p14 /root/system
+
+$BB mkdir -p /root/mnt/factory
+$BB mount -t ext4 -o ro /dev/mmcblk0p19 /root/mnt/factory
+$BB mkdir -p /root/mnt/usercalib
+$BB mount -t ext4 -o ro /dev/mmcblk0p9 /root/mnt/usercalib
+$BB mkdir -p /root/cache
+$BB mount -t ext4 /dev/mmcblk0p15 /root/cache
 
 $BB mount --move /dev /root/dev
 $BB umount /sys
 $BB umount /proc
-
-#$BB sleep 1000000
 
 exec $BB switch_root /root /sbin/init
