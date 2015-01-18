@@ -16,22 +16,28 @@ $BB mount -t devtmpfs devtmpfs /dev
 # Disable kernel messages
 #echo 0 > /proc/sys/kernel/printk
 
+PARTOFF=0
+if [ -e /dev/mmcblk0p25 ]; then # LTE version
+	PARTOFF=1
+fi
+
 $BB mkdir -p /data
-$BB mount -t ext4 -o noatime,nodiratime,errors=panic /dev/mmcblk0p24 /data
+$BB mount -t ext4 -o noatime,nodiratime,errors=panic /dev/mmcblk0p$((PARTOFF + 23)) /data
+
 $BB mkdir -p /root
 $BB mount -o bind /data/linux /root
 $BB mkdir -p /root/data
 $BB mount -o bind /data /root/data
 
 $BB mkdir -p /root/system
-$BB mount -t ext4 -o ro /dev/mmcblk0p14 /root/system
+$BB mount -t ext4 -o ro /dev/mmcblk0p$((PARTOFF + 13)) /root/system
 
 $BB mkdir -p /root/mnt/factory
-$BB mount -t ext4 -o ro /dev/mmcblk0p19 /root/mnt/factory
+$BB mount -t ext4 -o ro /dev/mmcblk0p$((PARTOFF + 18)) /root/mnt/factory
 $BB mkdir -p /root/mnt/usercalib
-$BB mount -t ext4 -o ro /dev/mmcblk0p9 /root/mnt/usercalib
+$BB mount -t ext4 -o ro /dev/mmcblk0p$((PARTOFF + 8)) /root/mnt/usercalib
 $BB mkdir -p /root/cache
-$BB mount -t ext4 /dev/mmcblk0p15 /root/cache
+$BB mount -t ext4 /dev/mmcblk0p$((PARTOFF + 14)) /root/cache
 
 $BB mount --move /dev /root/dev
 $BB umount /sys
